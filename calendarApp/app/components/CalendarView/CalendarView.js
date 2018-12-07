@@ -5,16 +5,16 @@ import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import styles from './styles';
 
 class CalendarView extends Component {
-    static propTypes = {
-        navigation: PropTypes.object,
-    }
+    // static propTypes = {
+    //     navigation: PropTypes.object,
+    // }
     // constructor(props) {
     //     super(props);
     //     this.state ={}
     // }
     render(){
 
-        //const {navigation} =  this.props;
+        const {navigation} =  this.props;
         return(
             <View>
                 <CalendarList
@@ -29,8 +29,12 @@ class CalendarView extends Component {
                         // Enable or disable vertical scroll indicator. Default = false
                         showScrollIndicator={true}
                         onDayChange={(day)=>{console.log('day changed')}}
-                        onDayPress={(day) => this.props.navigation.navigate('Reminder')}
-                        
+                        onDayPress={(day) => 
+                            {
+                                console.log(navigation);
+                                navigation.navigate('Agenda')
+                            }
+                        }
                     />
             </View>
         )
