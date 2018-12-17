@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,StyleSheet, AsyncStorage, TextInput, Alert } from 'react-native';
+import { View,StyleSheet, AsyncStorage, TextInput, Alert, TouchableOpacity } from 'react-native';
 import {
     Form,
     Button, Icon,
@@ -12,7 +12,7 @@ class Reminder extends Component {
 
         this.state = {
             chosenDate: this.props.navigation.state.params.selectedDay,
-            input: '',
+            text: '',
         };
         this.setDate = this.setDate.bind(this);
         this.handleChangeInput = this.handleChangeInput.bind(this);
@@ -28,13 +28,10 @@ class Reminder extends Component {
     }
 
     handleChangeInput = (text) =>  {
-        this.setState({input:text});
+        this.setState({text:text});
     }
 
-    //save the input
-    saveData() {
-        AsyncStorage.setItem("key", JSON.stringify(this.state));
-    }
+    
     render() { 
         return ( 
             <View>
@@ -65,7 +62,7 @@ class Reminder extends Component {
                         </Text>
                     </View>
                     <View style={styles.footer}>
-                        <Button block success style={styles.saveBtn} 
+                        {/* <Button block success style={styles.saveBtn} 
                         onPress={ () => 
                             {
                               this.saveData()
@@ -75,11 +72,29 @@ class Reminder extends Component {
                         } 
                            >
                             <Icon type='MaterialIcons' name='done' />                        
-                        </Button>
+                        </Button> */}
+                        <TouchableOpacity block success style={styles.saveBtn} onPress={this.saveData}>
+                            <Text>Set Reminders</Text>
+                        </TouchableOpacity>
                     </View>
                 </Form>
             </View> 
         );
+    }
+
+    saveData(){
+        AsyncStorage.setItem("key", JSON.stringify(this.state));
+        // console.log(this.state);
+        // let obj = this.state;
+        // let textInput = Object.entries(obj).map(([key, value])=> ({[key]: value}));
+        // console.log(textInput[1]);
+        let {chosenDate, ...text} =  this.state;
+        let textInput = Object.entries(text);
+        console.log(textInput);
+        let fomattedData = {[chosenDate]:textInput};
+        console.log('formatted state', fomattedData);
+
+        
     }
 }
 
@@ -110,6 +125,8 @@ const styles = StyleSheet.create({
     saveBtn: {
         position:'relative',
         marginTop: 35,
+        height:30,
+        backgroundColor:'#eee'
     }
 });
 
