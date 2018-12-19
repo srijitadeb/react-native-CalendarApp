@@ -21,7 +21,7 @@ class WeeklyAgenda extends Component {
            loadItemsForMonth={this.loadItems.bind(this)}
             selected={this.props.day}
             renderItem={this.renderItem.bind(this)}
-            renderEmptyDate={this.renderEmptyDate.bind(this)}
+            renderEmptyData={this.renderEmptyDate.bind(this)}
             rowHasChanged={this.rowHasChanged.bind(this)}
             onRefresh = {() => { this.setState({refeshing : true})}}
             refreshing = {this.state.refreshing}
@@ -54,83 +54,37 @@ class WeeklyAgenda extends Component {
       );
     }
 
-    //On application loads, this will get the already saved data and set the state true when it's true.
-    // componentDidMount() {
-    //     AsyncStorage.getItem("key").then((newItems) => {
-    //     console.log('checking new items', newItems);
-    //         this.setState({ items: JSON.parse(newItems) });
-    //     });
-    // }
-
-    loadItems(day) {
-      console.log(day);
-      setTimeout(() => {
-        for (let i = -15; i < 85; i++) {
-          const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-          const strTime = this.timeToString(time);
-          if (!this.state.items[strTime]) {
-            this.state.items[strTime] = [];
-            const numItems = Math.floor(Math.random() * 5);
-            for (let j = 0; j < numItems; j++) {
-              this.state.items[strTime].push({
-                name: 'Item for ' + strTime,
-                height: Math.max(50, Math.floor(Math.random() * 150))
-              });
-            }
-          }
-        }
-        //console.log("agenda1",this.state.items);
-        const newItems = {};
-        Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
-        this.setState({
-          items: newItems
+    componentDidMount(){
+      AsyncStorage.getItem("inputData").then((fomattedData) => {
+        console.log('stored Items', fomattedData);
+        this.setState({ items: JSON.parse(fomattedData) });
         });
-      }, 1000);
-    // console.log(`Load Items for ${day.year}-${day.month}`);
-  }
+    }
+
+    loadItems()  {
+      console.log('day', this.state.items);
+      const newItems = {};
+      Object.keys(this.state.items).forEach(key => {
+        newItems[key] = this.state.items[key];
+      });
+      this.setState({
+        items: newItems
+      });
+    }
 
   renderItem(item) {
-  // console.log("renderItem",item);
     return (
-      // <View style={[styles.item, {height: item.height}]}>
-      //   <TouchableOpacity onPress={(date) => {this.props.navigation.navigate('Reminder',date)}}>
-      //     <Text>{item.name}</Text>
-      //   </TouchableOpacity>
-      // </View>
-      <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
+      <View style={[styles.item, {height: item.height}]}>
+        <Text style={styles.textReminder}>{item.text.toUpperCase()}</Text>
+      </View>
     );
   }
-    
-  /** my attempt starts*/
-    // loadItems(day)  {
-    //   console.log('day', day);
-    //   const newItems = {};
-    //   Object.keys(this.state.items).forEach(key => {
-    //     newItems[key] = this.state.items[key];
-    //   });
-    //   this.setState({
-    //     items: newItems
-    //   });
-    // } 
-    
-    // renderItem(items) {
-    //   items.map(item => {
-    //       return (
-    //         //assuming that item object comes with an id if not you must add a unique key so you can call a func that updates a count variable and returns it
-    //         <Text key={item.id}>{item.name} {item.date}</Text>
-    //       );
-    //   });
-    // }
-  /** my attempt ends*/
 
     renderEmptyDate() {
       return (
-        // <View style={styles.emptyDate}>
-        //   <TouchableOpacity onPress={() => {this.props.navigation.navigate('Reminder')}}>
-        //     <Text style={styles.emptyTextColor}> No Event or Reminder on this date </Text>
-        //   </TouchableOpacity>
-        // </View>
-        <View style={styles.emptyDate}><Text>This is empty date!</Text></View>
+        <View style={styles.emptyDate}>
+          <Text style={styles.emptyTextColor}> No Event or Reminder on this date </Text>
+        </View>
 
       );
     }
@@ -163,6 +117,11 @@ const styles = StyleSheet.create({
       padding: 20,
       fontSize: 18,
       color: '#09905e'
+    },
+    textReminder:{
+      padding:20,
+      fontSize:18,
+      color: '#CCC'
     }
 });
  

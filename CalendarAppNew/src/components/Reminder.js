@@ -62,39 +62,42 @@ class Reminder extends Component {
                         </Text>
                     </View>
                     <View style={styles.footer}>
-                        {/* <Button block success style={styles.saveBtn} 
-                        onPress={ () => 
-                            {
-                              this.saveData()
-                              console.log('save data',this.state);
-                              Alert.alert('Yay!!', 'Succefully saved.')
-                            }
-                        } 
-                           >
-                            <Icon type='MaterialIcons' name='done' />                        
-                        </Button> */}
-                        <TouchableOpacity block success style={styles.saveBtn} onPress={this.saveData}>
+                        <Button block success style={styles.saveBtn} onPress={this.saveData}>
                             <Text>Set Reminders</Text>
-                        </TouchableOpacity>
+                        </Button>
                     </View>
                 </Form>
             </View> 
         );
     }
 
-    saveData(){
-        AsyncStorage.setItem("key", JSON.stringify(this.state));
+    async saveData(){
         // console.log(this.state);
-        // let obj = this.state;
-        // let textInput = Object.entries(obj).map(([key, value])=> ({[key]: value}));
-        // console.log(textInput[1]);
         let {chosenDate, ...text} =  this.state;
-        let textInput = Object.entries(text);
+        let textInput = Object.entries(text).map(([key, value])=> ({[key]: value}));
         console.log(textInput);
-        let fomattedData = {[chosenDate]:textInput};
-        console.log('formatted state', fomattedData);
-
-        
+        if (textInput[0].text === "") {
+            alert("Set your Reminder");
+        }
+        else {
+            let fomattedData = {};
+            let keyData = await AsyncStorage.getItem("inputData");
+            console.log({keyData});
+            if(keyData) {
+                fomattedData = JSON.parse(keyData);
+            }
+            if(fomattedData[chosenDate]) {
+                fomattedData[chosenDate] = fomattedData[chosenDate].concat(textInput);
+            }
+            else {
+                fomattedData[chosenDate] = textInput;
+            }
+            console.log({fomattedData});
+            AsyncStorage.setItem("inputData", JSON.stringify(fomattedData));
+            alert("Reminder Created");
+            this.props.navigation.navigate('Agenda');
+        }
+       
     }
 }
 
@@ -125,8 +128,9 @@ const styles = StyleSheet.create({
     saveBtn: {
         position:'relative',
         marginTop: 35,
-        height:30,
-        backgroundColor:'#eee'
+        height:50,
+        backgroundColor:'blue',
+        fontSize:23
     }
 });
 
